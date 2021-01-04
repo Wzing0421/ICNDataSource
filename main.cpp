@@ -139,20 +139,8 @@ void sendTextFile(){
 
 
 int main(){
-    /*
-    pthread_t thid1, thid2;
-    if(pthread_create(&thid1, NULL, distributeProc, NULL) != 0){
-        cout << "distribute process create error!" << endl;
-        return -1;
-    }
-    if(pthread_create(&thid2, NULL, inputProc, NULL) != 0){
-        cout << "input process create error!" << endl;
-        return -1;
-    }
-    pthread_join(thid1, NULL);
-    pthread_join(thid2, NULL);
-    */
+    
     //sendTextFile();
-    sendTextFile();
+    sendBinFile();
     return 0;
 }
