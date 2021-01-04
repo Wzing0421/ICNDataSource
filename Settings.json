@@ -1,0 +1,7 @@
+{
+    "commentSettings" : "此json的作用是存放client配置信息",
+    "InterestPort": 51001,
+    "DataPort": 51002,
+    "commentICNDstIP" : "ICNDstIP作用是定位目的ICN的IP地址",
+    "ICNDstIP": "162.105.85.247"
+}
