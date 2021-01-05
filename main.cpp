@@ -54,7 +54,7 @@ void binfileCopy(char* file1, char* file2){
 }
 
 void sendBinFile(){
-    string dstip = "162.105.85.198";
+    string dstip = "162.105.85.63";
     unsigned short dstport = 51002;
     UDPSocket udpsocket;
     udpsocket.create(20022);
@@ -91,13 +91,14 @@ void sendBinFile(){
         if(datapackage.end == 1){
             break;
         }
+        usleep(10000);
         count++;
     }
     udpsocket.Close();
 }
 
 void sendTextFile(){
-    string dstip = "162.105.85.198";
+    string dstip = "162.105.85.247";
     unsigned short dstport = 51002;
     UDPSocket udpsocket;
     udpsocket.create(20021);
@@ -132,6 +133,7 @@ void sendTextFile(){
         char sendbuffer[1500];
         memcpy(sendbuffer, &datapackage, sizeof(sendbuffer));
         udpsocket.sendbuf(sendbuffer, sizeof(sendbuffer), dstip, dstport);       
+        usleep(10000);
         count++;
     }
     udpsocket.Close();
@@ -139,8 +141,8 @@ void sendTextFile(){
 
 
 int main(){
-    
-    //sendTextFile();
-    sendBinFile();
+
+    sendTextFile();
+    //sendBinFile();
     return 0;
 }
