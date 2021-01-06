@@ -12,6 +12,10 @@
 
 using namespace std;
 
+void SplitString(string& s, vector<string>& v, const string& c);
+string getFileName(string GlobalName);
+bool judgeBinOrText(string GlobalName);
+
 void fileCopy(char *file1, char *file2)  
 {  
     // 最好对file1和file2进行判断  
@@ -53,16 +57,13 @@ void binfileCopy(char* file1, char* file2){
     fout.close();
 }
 
-void sendBinFile(){
-    string dstip = "162.105.85.63";
+void sendBinFile(string file, string dstip){
+    
     unsigned short dstport = 51002;
     UDPSocket udpsocket;
     udpsocket.create(20022);
-    string file1;
-    cout << "Please input file name: " << endl;
-    cin >> file1;
-
-    ifstream in(file1, ios::binary);
+    
+    ifstream in(file, ios::binary);
     if(!in){
         cout << "File open error" << endl;
         return;
@@ -72,7 +73,7 @@ void sendBinFile(){
     while (!in.eof())  
     {
         DataPackage datapackage;
-        string contentName = "pku/eecs/file/" + file1 + "/segment" + to_string(count);
+        string contentName = "pku/eecs/file/" + file + "/segment" + to_string(count);
         strcpy(datapackage.contentName, contentName.c_str());
         
         in.read(datapackage.data, 1400);
@@ -97,16 +98,13 @@ void sendBinFile(){
     udpsocket.Close();
 }
 
-void sendTextFile(){
-    string dstip = "162.105.85.247";
+void sendTextFile(string file, string dstip){
+    
     unsigned short dstport = 51002;
     UDPSocket udpsocket;
     udpsocket.create(20021);
-    string file1;
-    cout << "Please input file name: " << endl;
-    cin >> file1;
 
-    ifstream in(file1);  
+    ifstream in(file);  
     string filename;  
     string line;  
   
@@ -119,7 +117,7 @@ void sendTextFile(){
             datapackage.data[i] = line[i];
         }
         datapackage.data[i] = '\0';
-        string contentName = "pku/eecs/file/" + file1 + "/segment" + to_string(count);
+        string contentName = "pku/eecs/file/" + file + "/segment" + to_string(count);
         cout << contentName << endl;
         strcpy(datapackage.contentName, contentName.c_str());
         datapackage.datasize = i + 2;
@@ -139,10 +137,63 @@ void sendTextFile(){
     udpsocket.Close();
 }
 
+void sendfile(){
+    string dstip;
+    string fileName;
+
+    while(true){
+        cout << "请输入文件名称：" << endl;
+        cin >> fileName;
+        cout << "请输入目的ICN地址" << endl;
+        cin >> dstip;
+
+        if(judgeBinOrText(fileName)){
+            //text
+            sendTextFile(fileName, dstip);
+        }
+        else{
+            //binary
+            sendBinFile(fileName, dstip);
+        }
+    }
+}
+
+void SplitString(string& s, vector<string>& v, const string& c){
+    std::string::size_type pos1, pos2;
+    pos2 = s.find(c);
+    pos1 = 0;
+    while(std::string::npos != pos2)
+    {
+        v.push_back(s.substr(pos1, pos2-pos1));
+ 
+        pos1 = pos2 + c.size();
+        pos2 = s.find(c, pos1);
+    }
+    if(pos1 != s.length())
+        v.push_back(s.substr(pos1));
+}
+
+string getFileName(string GlobalName){
+    string FileName = "";
+    vector<string> v;
+    SplitString(GlobalName, v, "/");
+    if(v.size() < 1){
+        cout << "[Error]: Invalid GlobalName! GlobalName is: " << GlobalName << endl; 
+        return FileName;
+    }
+    // 默认倒数第1个是文件名字 eg: pku/eecs/file/test1.txt
+    return v[v.size() - 1];
+}
+
+bool judgeBinOrText(string GlobalName){
+    string FileName = getFileName(GlobalName);
+    if(FileName.find("txt") !=  FileName.npos) return true;
+    return false;
+}
 
 int main(){
-
-    sendTextFile();
+    sendfile();
+    //sendTextFile();
     //sendBinFile();
     return 0;
 }
