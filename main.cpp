@@ -57,7 +57,7 @@ void binfileCopy(char* file1, char* file2){
     fout.close();
 }
 
-void sendBinFile(string file, string dstip){
+void PublishBinFile(string file, string dstip){
     
     unsigned short dstport = 51002;
     UDPSocket udpsocket;
@@ -98,7 +98,7 @@ void sendBinFile(string file, string dstip){
     udpsocket.Close();
 }
 
-void sendTextFile(string file, string dstip){
+void PublishTextFile(string file, string dstip){
     
     unsigned short dstport = 51002;
     UDPSocket udpsocket;
@@ -137,7 +137,7 @@ void sendTextFile(string file, string dstip){
     udpsocket.Close();
 }
 
-void sendfile(){
+void Publish(){
     string dstip;
     string fileName;
 
@@ -149,11 +149,11 @@ void sendfile(){
 
         if(judgeBinOrText(fileName)){
             //text
-            sendTextFile(fileName, dstip);
+            PublishTextFile(fileName, dstip);
         }
         else{
             //binary
-            sendBinFile(fileName, dstip);
+            PublishBinFile(fileName, dstip);
         }
     }
 }
@@ -192,8 +192,6 @@ bool judgeBinOrText(string GlobalName){
 }
 
 int main(){
-    sendfile();
-    //sendTextFile();
-    //sendBinFile();
+    Publish();
     return 0;
 }
