@@ -1,0 +1,1 @@
+build/objs/VideoTrans.o build/deps/VideoTrans.dep:VideoTrans.cpp VideoTrans.h UDPSocket.h Package.h

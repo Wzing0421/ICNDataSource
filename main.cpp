@@ -1,5 +1,6 @@
 #include "UDPSocket.h"
 #include "Package.h"
+#include "VideoTrans.h"
 
 #include <unordered_map>
 #include <iostream>
@@ -137,24 +138,50 @@ void PublishTextFile(string file, string dstip){
     udpsocket.Close();
 }
 
+bool judgeVideo(string name){
+    return name.find("video") != name.npos;
+}
+
+void *thread_startVideoReceiver(void *arg){
+    ARGS *p = (ARGS*) arg;
+    cout << "Create Receiving Video Thread!" << endl;
+    videoTrans videoreceiver(p->GlobalName, p->port);
+    videoreceiver.videoTransProc();
+}
+
 void Publish(){
     string dstip;
-    string fileName;
+    string name;
 
     while(true){
-        cout << "请输入文件名称：" << endl;
-        cin >> fileName;
+        cout << "请输入发布业务名称：" << endl;
+        cin >> name;
         cout << "请输入目的ICN地址" << endl;
         cin >> dstip;
 
-        if(judgeBinOrText(fileName)){
-            //text
-            PublishTextFile(fileName, dstip);
+        // first judge its a video stream or a file
+        if(judgeVideo(name)){
+            // start a new thread transfering video stream to ICN node
+            pthread_t thid;
+            unsigned short port = 12345;// random
+            ARGS arg(name, port);
+            if(pthread_create(&thid, NULL, thread_startVideoReceiver, (void*)&arg) != 0){
+                cout << "Thread " << thid << "create error" << endl;
+                continue;
+            }
         }
         else{
-            //binary
-            PublishBinFile(fileName, dstip);
+            string fileName = name;
+            if(judgeBinOrText(fileName)){
+            //text
+                PublishTextFile(fileName, dstip);
+            }
+            else{
+                //binary
+                PublishBinFile(fileName, dstip);
+            }
         }
+        
     }
 }
 
