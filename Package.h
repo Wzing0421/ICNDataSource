@@ -155,12 +155,18 @@ struct VideoPackage{
 
 struct ARGS
 {
-    string GlobalName;
     unsigned short port;
+    char GlobalName[50];
+    
+    /**
+     * dstIP for ICN Node
+    */
+    string dstIP;
 
-    ARGS(string _GlobalNames, unsigned short _port){
-        GlobalName = _GlobalNames;
+    ARGS(string _GlobalName, unsigned short _port, string _dstIP){
+        memcpy(GlobalName, _GlobalName.c_str(), _GlobalName.size());
         port = _port;
+        dstIP = _dstIP;
     }
 };
 

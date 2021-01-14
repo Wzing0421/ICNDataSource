@@ -1,9 +1,10 @@
 #include "VideoTrans.h"
 
-videoTrans::videoTrans(string _GlobalName, unsigned short _port){
+videoTrans::videoTrans(string _GlobalName, unsigned short _port, string _dstIP){
     GlobalName = _GlobalName;
     port= _port;
     videoTransSocket.create(port);
+    dstIP = _dstIP;
 }
 
 videoTrans::~videoTrans(){}
@@ -13,9 +14,8 @@ void videoTrans::videoTransProc(){
     string srcip_;
     unsigned short sport_;
     // ICN IP
-    string dstIP = "162.105.85.235";
     unsigned short dstport = 51005;
-    string contentName = "pku/eecs/video/test1.mp3";
+    //string contentName = "pku/eecs/video/test1.mp4";
     int lenrecv;
 
     while(true){
@@ -26,10 +26,9 @@ void videoTrans::videoTransProc(){
         }
         char sendbuf[1500];
         // default name length is 50
-        memcpy(sendbuf, contentName.c_str(), contentName.size());
+        memcpy(sendbuf, GlobalName.c_str(), GlobalName.size());
         memcpy(sendbuf + 50, recvVideoBuf, lenrecv);
         int lensend = videoTransSocket.sendbuf(sendbuf, lenrecv + 50, dstIP, dstport);
-        cout << lensend << endl;
     }
     videoTransSocket.Close();
 }

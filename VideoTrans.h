@@ -28,9 +28,14 @@ private:
 
     UDPSocket videoTransSocket;
 
+    /**
+     * dst IP for ICN Node: e.g: 162.105.85.235
+     */
+    string dstIP;
+
 public:
     
-    videoTrans(string _GlobalName, unsigned short _port);
+    videoTrans(string _GlobalName, unsigned short _port, string _dstIP);
     ~videoTrans();
     void videoTransProc();
 

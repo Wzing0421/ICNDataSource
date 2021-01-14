@@ -17,6 +17,9 @@ void SplitString(string& s, vector<string>& v, const string& c);
 string getFileName(string GlobalName);
 bool judgeBinOrText(string GlobalName);
 
+unordered_map<string, unsigned short> ContentName2VideoPort;
+unordered_map<unsigned short, string> VideoPort2ContentName;
+
 void fileCopy(char *file1, char *file2)  
 {  
     // 最好对file1和file2进行判断  
@@ -144,8 +147,8 @@ bool judgeVideo(string name){
 
 void *thread_startVideoReceiver(void *arg){
     ARGS *p = (ARGS*) arg;
-    cout << "Create Receiving Video Thread!" << endl;
-    videoTrans videoreceiver(p->GlobalName, p->port);
+    cout << "Create Receiving Video Thread! Port is: " << p->port << " Name is : " << p->GlobalName << endl;
+    videoTrans videoreceiver(p->GlobalName, p->port, p->dstIP);
     videoreceiver.videoTransProc();
 }
 
@@ -156,6 +159,10 @@ void Publish(){
     while(true){
         cout << "请输入发布业务名称：" << endl;
         cin >> name;
+        if(ContentName2VideoPort.find(name) != ContentName2VideoPort.end()){
+            cout << "[Warning] The task: " << name << " is running!" << endl;
+            continue;
+        }
         cout << "请输入目的ICN地址" << endl;
         cin >> dstip;
 
@@ -163,8 +170,17 @@ void Publish(){
         if(judgeVideo(name)){
             // start a new thread transfering video stream to ICN node
             pthread_t thid;
-            unsigned short port = 12345;// random
-            ARGS arg(name, port);
+            unsigned short port;
+            while (true)
+            {
+                port = rand() % 10000 + 10000;// get a random port : [10000, 20000)
+                if(VideoPort2ContentName.find(port) != VideoPort2ContentName.end()) continue;
+                VideoPort2ContentName.insert(make_pair(port, name));
+                ContentName2VideoPort.insert(make_pair(name, port));
+                break;
+            }
+            ARGS arg(name, port, dstip);
+            
             if(pthread_create(&thid, NULL, thread_startVideoReceiver, (void*)&arg) != 0){
                 cout << "Thread " << thid << "create error" << endl;
                 continue;
