@@ -1,1 +1,1 @@
-build/objs/main.o build/deps/main.dep:main.cpp UDPSocket.h Package.h VideoTrans.h
+build/objs/main.o build/deps/main.dep:main.cpp UDPSocket.h TCPSocket.h Package.h VideoTrans.h

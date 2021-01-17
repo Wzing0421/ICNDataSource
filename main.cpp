@@ -1,4 +1,5 @@
 #include "UDPSocket.h"
+#include "TCPSocket.h"
 #include "Package.h"
 #include "VideoTrans.h"
 
@@ -63,10 +64,12 @@ void binfileCopy(char* file1, char* file2){
 
 void PublishBinFile(string file, string dstip){
     
-    unsigned short dstport = 51002;
-    UDPSocket udpsocket;
-    udpsocket.create(20022);
-    
+    unsigned short dstport = 59900;
+    TCPClient tcpclient;
+    if(0 != tcpclient.tcpconnect(dstip, dstport)){
+        cout << "tcp client connect error" << endl;
+        return;
+    }
     ifstream in(file, ios::binary);
     if(!in){
         cout << "File open error" << endl;
@@ -92,21 +95,28 @@ void PublishBinFile(string file, string dstip){
         }
         char sendbuffer[1500];
         memcpy(sendbuffer, &datapackage, sizeof(sendbuffer));
-        udpsocket.sendbuf(sendbuffer, sizeof(sendbuffer), dstip, dstport);       
+        int len = tcpclient.sendbuf(sendbuffer, sizeof(sendbuffer));
+        if(len <= 0){
+            cout << "tcp send error" << endl;
+            break;
+        }
         if(datapackage.end == 1){
             break;
         }
         usleep(10000);
         count++;
     }
-    udpsocket.Close();
+    tcpclient.tcpclose();
 }
 
 void PublishTextFile(string file, string dstip){
-    
-    unsigned short dstport = 51002;
-    UDPSocket udpsocket;
-    udpsocket.create(20021);
+
+    unsigned short dstport = 59900;
+    TCPClient tcpclient;
+    if(0 != tcpclient.tcpconnect(dstip, dstport)){
+        cout << "tcp client connect error" << endl;
+        return;
+    }
 
     ifstream in(file);  
     string filename;  
@@ -134,15 +144,24 @@ void PublishTextFile(string file, string dstip){
         }
         char sendbuffer[1500];
         memcpy(sendbuffer, &datapackage, sizeof(sendbuffer));
-        udpsocket.sendbuf(sendbuffer, sizeof(sendbuffer), dstip, dstport);       
+        int len = tcpclient.sendbuf(sendbuffer, sizeof(sendbuffer));
+        if(len <= 0){
+            cout << "tcp send error" << endl;
+            break;
+        }
+        //udpsocket.sendbuf(sendbuffer, sizeof(sendbuffer), dstip, dstport);       
         usleep(10000);
         count++;
     }
-    udpsocket.Close();
+    tcpclient.tcpclose();
 }
 
 bool judgeVideo(string name){
     return name.find("video") != name.npos;
+}
+
+bool judgeFile(string name){
+    return name.find("file") != name.npos;
 }
 
 void *thread_startVideoReceiver(void *arg){
