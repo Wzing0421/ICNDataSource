@@ -64,7 +64,7 @@ void binfileCopy(char* file1, char* file2){
 
 void PublishBinFile(string file, string dstip){
     
-    unsigned short dstport = 59900;
+    unsigned short dstport = 31900;
     TCPClient tcpclient;
     if(0 != tcpclient.tcpconnect(dstip, dstport)){
         cout << "tcp client connect error" << endl;
@@ -111,7 +111,7 @@ void PublishBinFile(string file, string dstip){
 
 void PublishTextFile(string file, string dstip){
 
-    unsigned short dstport = 59900;
+    unsigned short dstport = 31900;
     TCPClient tcpclient;
     if(0 != tcpclient.tcpconnect(dstip, dstport)){
         cout << "tcp client connect error" << endl;
