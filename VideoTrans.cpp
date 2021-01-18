@@ -14,7 +14,7 @@ void videoTrans::videoTransProc(){
     string srcip_;
     unsigned short sport_;
     // ICN IP
-    unsigned short dstport = 51005;
+    unsigned short dstport = 31902;
     //string contentName = "pku/eecs/video/test1.mp4";
     int lenrecv;
 
