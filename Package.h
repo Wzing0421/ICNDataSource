@@ -170,5 +170,21 @@ struct ARGS
     }
 };
 
+struct MSGARGS
+{
+    
+    char GlobalName[50];
+    unsigned short port;
+    /**
+     * dstIP for ICN Node
+    */
+    string dstIP;
+
+    MSGARGS(string _GlobalName, unsigned short _port, string _dstIP){
+        memcpy(GlobalName, _GlobalName.c_str(), _GlobalName.size());
+        port = _port;
+        dstIP = _dstIP;
+    }
+};
 
 #endif

@@ -2,6 +2,7 @@
 #include "TCPSocket.h"
 #include "Package.h"
 #include "VideoTrans.h"
+#include "MsgTrans.h"
 
 #include <unordered_map>
 #include <iostream>
@@ -164,11 +165,25 @@ bool judgeFile(string name){
     return name.find("file") != name.npos;
 }
 
+bool judgeMsg(string name){
+    return name.find("msg") != name.npos;
+}
+
 void *thread_startVideoReceiver(void *arg){
     ARGS *p = (ARGS*) arg;
     cout << "Create Receiving Video Thread! Port is: " << p->port << " Name is : " << p->GlobalName << endl;
     videoTrans videoreceiver(p->GlobalName, p->port, p->dstIP);
     videoreceiver.videoTransProc();
+}
+
+void *thread_startMsgReceiver(void *arg){
+    MSGARGS *p = (MSGARGS*) arg;
+    string globalname = p->GlobalName;
+    string dstIP = p->dstIP;
+    cout << "Create Receiving Msg Thread! Port is: " << p->port << " Name is : " << globalname << " IP is: " << dstIP << endl;
+    
+    MsgTrans msgreceiver(globalname, p->port, dstIP);
+    msgreceiver.MsgTransProc();
 }
 
 void Publish(){
@@ -205,6 +220,27 @@ void Publish(){
                 continue;
             }
         }
+        else if(judgeMsg(name)){
+            // short message
+            // start a new thread transfering message stream to ICN node
+            pthread_t thid;
+            unsigned short port;
+            while (true)
+            {
+                port = rand() % 10000 + 10000;// get a random port : [10000, 20000)
+                if(VideoPort2ContentName.find(port) != VideoPort2ContentName.end()) continue;
+                VideoPort2ContentName.insert(make_pair(port, name));
+                ContentName2VideoPort.insert(make_pair(name, port));
+                break;
+            }
+            
+            MSGARGS arg(name, port, dstip);
+            if(pthread_create(&thid, NULL, thread_startMsgReceiver, (void*)&arg) != 0){
+                cout << "Msg Thread " << thid << "create error" << endl;
+                continue;
+            }
+        }
+        // file 
         else{
             string fileName = name;
             if(judgeBinOrText(fileName)){

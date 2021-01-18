@@ -1,0 +1,1 @@
+build/objs/MsgTrans.o build/deps/MsgTrans.dep:MsgTrans.cpp MsgTrans.h UDPSocket.h Package.h
