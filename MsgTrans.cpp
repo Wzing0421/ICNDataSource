@@ -14,8 +14,8 @@ void MsgTrans::MsgTransProc(){
     string srcip_;
     unsigned short sport_;
     // ICN IP
-    //unsigned short dstport = 31903;
-    unsigned short dstport = 51002;
+    unsigned short dstport = 31903;
+    //unsigned short dstport = 51002;
     //string contentName = "pku/eecs/video/test1.mp4";
     int lenrecv;
     unsigned long long count = 0;
