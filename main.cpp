@@ -191,13 +191,13 @@ void Publish(){
     string name;
 
     while(true){
-        cout << "请输入发布业务名称：" << endl;
+        cout << "请输入内容索引名称：" << endl;
         cin >> name;
         if(ContentName2VideoPort.find(name) != ContentName2VideoPort.end()){
             cout << "[Warning] The task: " << name << " is running!" << endl;
             continue;
         }
-        cout << "请输入目的ICN地址" << endl;
+        cout << "请输入ICN集群地址" << endl;
         cin >> dstip;
 
         // first judge its a video stream or a file
