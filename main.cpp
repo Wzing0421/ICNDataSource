@@ -86,7 +86,7 @@ void PublishBinFile(string file, string dstip){
         
         in.read(datapackage.data, 1400);
         datapackage.datasize = in.gcount();
-        cout << datapackage.contentName << endl;
+        //cout << datapackage.contentName << endl;
         datapackage.segmentNum = count;
         if(datapackage.datasize != 1400){
             datapackage.end = 1;
@@ -107,6 +107,7 @@ void PublishBinFile(string file, string dstip){
         usleep(10000);
         count++;
     }
+    cout << "传输 " << file <<  " 任务结束" << endl;
     tcpclient.tcpclose();
 }
 
@@ -133,7 +134,7 @@ void PublishTextFile(string file, string dstip){
         }
         datapackage.data[i] = '\0';
         string contentName = "pku/eecs/file/" + file + "/segment" + to_string(count);
-        cout << contentName << endl;
+        //cout << contentName << endl;
         strcpy(datapackage.contentName, contentName.c_str());
         datapackage.datasize = i + 2;
         datapackage.segmentNum = count;
@@ -154,6 +155,7 @@ void PublishTextFile(string file, string dstip){
         usleep(10000);
         count++;
     }
+    cout << "传输 " << file <<  " 任务结束" << endl;
     tcpclient.tcpclose();
 }
 
